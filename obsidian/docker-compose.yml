@@ -1,0 +1,21 @@
+services:
+  obsidian:
+    image: ghcr.io/sytone/obsidian-remote:latest
+    container_name: obsidian
+    # security_opt:
+    #   - seccomp:unconfined #optional
+    environment:
+      # - PUID=1000
+      # - PGID=1000
+      - TZ=Europe/Berlin
+      # - CUSTOM_USER=""
+      # - PASSWORD=""
+      - CUSTOM_PORT=8080
+      - CUSTOM_HTTPS_PORT=8443
+    volumes:
+      - ./obsidian-data:/config
+    ports:
+      - 8080:8080
+      - 8443:8443
+    # shm_size: "1gb"
+    restart: unless-stopped
