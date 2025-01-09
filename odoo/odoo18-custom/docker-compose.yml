@@ -1,6 +1,8 @@
 services:
   web:
-    image: 'odoo:latest'
+    build:
+      context: .
+      dockerfile: Dockerfile
     depends_on:
       - db
     ports:
@@ -9,7 +11,6 @@ services:
       - 'odoo18-web-data:/var/lib/odoo'
       - './odoo/config:/etc/odoo'
       - './odoo/addons:/var/lib/odoo/addons/18.0'
-    command: ["/bin/sh", "-c", "./entrypoint.sh"] 
     healthcheck:      
       test:
         - CMD
@@ -20,8 +21,8 @@ services:
       timeout: 10s
       retries: 30
     environment:
-      - USER=$SERVICE_USER_POSTGRES
-      - PASSWORD=$SERVICE_PASSWORD_POSTGRES
+      - USER=odoo
+      - PASSWORD=odoo
     restart: unless-stopped
   db:
     image: 'postgres:16'
@@ -30,13 +31,13 @@ services:
     volumes:
       - 'odoo18-db-data:/var/lib/postgresql/data'
     environment:
-      - POSTGRES_USER=$SERVICE_USER_POSTGRES
-      - POSTGRES_PASSWORD=$SERVICE_PASSWORD_POSTGRES
+      - POSTGRES_USER=odoo
+      - POSTGRES_PASSWORD=odoo
       - POSTGRES_DB=postgres
     healthcheck:
       test:
         - CMD-SHELL
-        - 'pg_isready -U $${POSTGRES_USER} -d postgres'
+        - 'pg_isready -U $odoo -d odoo'
       interval: 5s
       timeout: 20s
       retries: 10
