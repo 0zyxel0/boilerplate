@@ -4,21 +4,39 @@ services:
     depends_on:
       - db
     ports:
-      - "8069:8069"
+      - "8089:8089"
     volumes:
       - odoo-web-data:/var/lib/odoo
-      - ./config:/etc/odoo
-      - ./addons17:/mnt/extra-addons
+      - ./odoo/config:/etc/odoo
+      - ./odoo/addons:/mnt/extra-addons
     environment:
-      - USER=odoo
-      - PASSWORD=odoo
+    - USER=$SERVICE_USER_POSTGRES
+    - PASSWORD=$SERVICE_PASSWORD_POSTGRES
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - '-f'
+        - 'http://127.0.0.1:8089'
+      interval: 2s
+      timeout: 10s
+      retries: 30
     restart: unless-stopped
   db:
     image: postgres:15
+    ports:
+      - '5445:5432'
     environment:
+      - POSTGRES_USER=$SERVICE_USER_POSTGRES
+      - POSTGRES_PASSWORD=$SERVICE_PASSWORD_POSTGRES
       - POSTGRES_DB=postgres
-      - POSTGRES_PASSWORD=odoo
-      - POSTGRES_USER=odoo
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - 'pg_isready -U $${POSTGRES_USER} -d postgres'
+      interval: 5s
+      timeout: 20s
+      retries: 10
     volumes:
       - odoo-db-data:/var/lib/postgresql/data
     restart: unless-stopped
@@ -26,3 +44,4 @@ services:
 volumes:
   odoo-web-data:
   odoo-db-data:
+
