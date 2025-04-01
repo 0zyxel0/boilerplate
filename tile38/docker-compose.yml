@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  tile38-leader:
+    image: tile38/tile38:1.32.2
+    container_name: tile38-leader
+    command: >
+            /bin/sh -c 'mkdir -p tmp/data && \
+                        echo "{\"logconfig\":{\"level\":\"debug\",\"encoding\":\"json\",\"outputPaths\":[\"stdout\"],\"errorOutputPaths\":[\"stderr\"],\"encoderConfig\": {\"messageKey\":\"message\",\"levelKey\":\"level\",\"levelEncoder\":\"lowercase\", \"timeKey\":\"timestamp\",\"timeEncoder\":\"ISO8601\"}}}"> tmp/data/config
+                        tile38-server -d ./data -vv -p 9851 -l json'
+    ports:
+      - 9851:9851      
+    volumes: 
+      - ./data-leader:/data
+  tile38-follower:
+    image: tile38/tile38:1.32.2
+    container_name: tile38-follower
+    command: >
+            /bin/sh -c 'tile38-server -d ./data -vv -p 9852 -l json \
+            FOLLOW tile38-leader 9581'
+    ports:
+      - 9852:9852
+    volumes: 
+      - ./data-follower:/data
+    depends_on:
+      - tile38-leader
+volumes:
+  data:  # Define the data volume
+  data-follower: # Define the data volume

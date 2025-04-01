@@ -2,3 +2,9 @@ odoo/odoo18/odoo/addons/
 odoo/odoo17/odoo/addons/
 odoo/odoo18-custom/odoo/addons/
 
+tile38/data-follower/queue.db
+tile38/data-leader/queue.db
+tile38/data-follower/appendonly.aof
+tile38/data-leader/appendonly.aof
+tile38/data-follower/config
+tile38/data-leader/config
