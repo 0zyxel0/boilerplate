@@ -8,3 +8,4 @@ tile38/data-follower/appendonly.aof
 tile38/data-leader/appendonly.aof
 tile38/data-follower/config
 tile38/data-leader/config
+chromadb/chromadb/chroma.sqlite3
