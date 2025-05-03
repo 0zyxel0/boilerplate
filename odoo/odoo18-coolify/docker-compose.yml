@@ -1,0 +1,46 @@
+services:
+  web:
+    image: 'odoo:18.0'
+    depends_on:
+      - db
+    ports:
+      - '8069:8069'
+    volumes:
+      - 'odoo18-web-data:/var/lib/odoo'
+      - './odoo/config:/etc/odoo'
+      - './odoo/addons:/var/lib/odoo/addons/18.0'
+    command: ["/bin/sh", "-c", "./entrypoint.sh"] 
+    healthcheck:      
+      test:
+        - CMD
+        - curl
+        - '-f'
+        - 'http://127.0.0.1:8069'
+      interval: 2s
+      timeout: 10s
+      retries: 30
+    environment:
+      - USER=$SERVICE_USER_POSTGRES
+      - PASSWORD=$SERVICE_PASSWORD_POSTGRES
+    restart: unless-stopped
+  db:
+    image: 'postgres:16'
+    ports:
+      - '5434:5432'
+    volumes:
+      - 'odoo18-db-data:/var/lib/postgresql/data'
+    environment:
+      - POSTGRES_USER=$SERVICE_USER_POSTGRES
+      - POSTGRES_PASSWORD=$SERVICE_PASSWORD_POSTGRES
+      - POSTGRES_DB=postgres
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - 'pg_isready -U $${POSTGRES_USER} -d postgres'
+      interval: 5s
+      timeout: 20s
+      retries: 10
+    restart: unless-stopped
+volumes:
+  odoo18-web-data: null
+  odoo18-db-data: null
