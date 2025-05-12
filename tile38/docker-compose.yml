@@ -1,29 +1,30 @@
-version: "3.9"
-
 services:
   tile38-leader:
     image: tile38/tile38:1.32.2
     container_name: tile38-leader
     command: >
-            /bin/sh -c 'mkdir -p tmp/data && \
-                        echo "{\"logconfig\":{\"level\":\"debug\",\"encoding\":\"json\",\"outputPaths\":[\"stdout\"],\"errorOutputPaths\":[\"stderr\"],\"encoderConfig\": {\"messageKey\":\"message\",\"levelKey\":\"level\",\"levelEncoder\":\"lowercase\", \"timeKey\":\"timestamp\",\"timeEncoder\":\"ISO8601\"}}}"> tmp/data/config
-                        tile38-server -d ./data -vv -p 9851 -l json'
+            /bin/sh -c 'mkdir -p /data && \
+                        echo "{\"logconfig\":{\"level\":\"debug\",\"encoding\":\"json\",\"outputPaths\":[\"stdout\"],\"errorOutputPaths\":[\"stderr\"],\"encoderConfig\": {\"messageKey\":\"message\",\"levelKey\":\"level\",\"levelEncoder\":\"lowercase\", \"timeKey\":\"timestamp\",\"timeEncoder\":\"ISO8601\"}}}"> /data/config && \
+                        tile38-server -d /data -vv -p 9851 -l json'
     ports:
-      - 9851:9851      
-    volumes: 
+      - 9851:9851
+    volumes:
+      # Mount the local data-leader directory (containing tile38.conf) to /data inside the container
       - ./data-leader:/data
   tile38-follower:
-    image: tile38/tile38:1.32.2
+    image: tile38/tile38:1.32.2 # Match leader image tag if possible
     container_name: tile38-follower
     command: >
-            /bin/sh -c 'tile38-server -d ./data -vv -p 9852 -l json \
-            FOLLOW tile38-leader 9581'
+            /bin/sh -c 'mkdir -p /data && \
+                        tile38-server -d /data -vv -p 9852 -l json \
+            FOLLOW tile38-leader 9851 --leaderauth your_strong_password'
     ports:
       - 9852:9852
-    volumes: 
+    volumes:
       - ./data-follower:/data
     depends_on:
       - tile38-leader
+# Removed unused 'data:' volume definition if it's not needed elsewhere
 volumes:
-  data:  # Define the data volume
-  data-follower: # Define the data volume
+  data-leader: # Explicitly define named volumes is often better practice
+  data-follower:

@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "redis": "^5.0.1",
+    "tile38-client": "^0.1.0"
+  }
+}

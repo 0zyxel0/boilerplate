@@ -1,0 +1,9 @@
+services:
+  redis-commander:
+    container_name: redis-commander-tile38
+    hostname: redis-commander
+    image: rediscommander/redis-commander:latest
+    environment:
+      - REDIS_HOSTS=localhost:9851
+    ports:
+      - "8089:8081"
