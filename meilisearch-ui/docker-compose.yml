@@ -1,0 +1,24 @@
+services:
+  meilisearch:
+    image: getmeili/meilisearch:v1.7
+    container_name: meilisearch
+    ports:
+      - "7700:7700"
+    environment:
+      - MEILI_MASTER_KEY=yourStrongSecretKey
+    volumes:
+      - meili_data:/meili_data
+
+  meilisearch-ui:
+    image: riccoxie/meilisearch-ui:latest
+    container_name: meilisearch-ui
+    ports:
+      - "8080:8080"
+    environment:
+      - VITE_MEILISEARCH_HOST=https://scstmeili.scribblecubes.ph
+      - VITE_MEILISEARCH_API_KEY=GWIG7XJMXnkmrJppX2ieKhlXy2hwdJPb
+    depends_on:
+      - meilisearch
+
+volumes:
+  meili_data:
