@@ -10,10 +10,11 @@ services:
       PGADMIN_DEFAULT_PASSWORD: admin
       PGADMIN_CONFIG_SERVER_MODE: 'False'
     volumes:
-      # This will mount your file system folder to the container.
-      - ./pgadmin-data:/var/lib/pgadmin
-      - ./pgtemp:/var/tmp
+      # Using the named volumes defined below
+      - pgadmin-data:/var/lib/pgadmin
+      - pg-temp:/var/tmp
 
 volumes:
   pg-data:
   pgadmin-data:
+  pg-temp: # Added this to match your service

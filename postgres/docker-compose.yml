@@ -33,9 +33,10 @@ services:
       - db
     volumes:
       # This will mount your file system folder to the container.
-      - ./pgadmin-data:/var/lib/pgadmin
-      - ./pgtemp:/var/tmp
+      - pgadmin-data:/var/lib/pgadmin
+      - pg-temp:/var/tmp
 
 volumes:
   pg-data:
   pgadmin-data:
+  pg-temp:
